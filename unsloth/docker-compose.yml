@@ -1,0 +1,45 @@
+services:
+  unsloth:
+    image: unsloth-dgx-spark
+    container_name: unsloth
+    restart: unless-stopped
+
+    # GPU access
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    # IPC + ulimits
+    ipc: host
+    ulimits:
+      memlock: -1
+      stack: 67108864
+
+    # Port mappings (external:internal)
+    ports:
+      - "51078:8888"   # Jupyter Lab
+      - "51070:8000"   # Unsloth Studio
+
+    # Folder mappings
+    volumes:
+      - ./work:/workspace/work
+      - ./notebooks:/workspace/notebooks
+      - ./outputs:/workspace/outputs
+      - /srv/models:/workspace/models
+      - /mnt/library:/workspace/library
+      - ./huggingface:/root/.cache/huggingface
+
+    working_dir: /workspace
+
+    tty: true
+    stdin_open: true
+
+    command: >
+      bash -c "
+      jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root &
+      /root/.unsloth/studio/unsloth_studio/bin/unsloth studio --host 0.0.0.0 --port 8000
+      "
