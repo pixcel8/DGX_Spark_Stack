@@ -1,0 +1,31 @@
+-----------------------------------------------------------
+NVIDIA DGX Spark - vLLM dgx-spark-vllm-gemma4-26b-uncensored
+-----------------------------------------------------------
+
+sudo mkdir -p /srv/vllm
+sudo mkdir -p /srv/vllm/dgx-spark-vllm-gemma4-26b-uncensored/venv
+
+sudo chown $USER:$USER /srv/vllm/dgx-spark-vllm-gemma4-26b-uncensored/venv
+
+sudo groupadd models
+sudo usermod -aG models vllm
+sudo chgrp -R models /srv/models
+sudo chmod -R 775 /srv/models
+
+sudo usermod -aG docker vllm
+
+
+cd /srv/vllm/
+
+git clone https://github.com/ZengboJamesWang/dgx-spark-vllm-gemma4-26b-uncensored.git
+
+cd dgx-spark-vllm-gemma4-26b-uncensored
+python3 -m venv venv
+source venv/bin/activate
+
+pip install --upgrade pip
+pip install huggingface-hub
+
+# Modify paths to /srv/models and vllm to max_num_Seq=4, batch size of 32867 and context of 131072 
+./scripts/download-model.sh
+./scripts/start.sh
