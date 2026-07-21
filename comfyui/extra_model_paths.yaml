@@ -1,0 +1,11 @@
+sdxl_checkpoints:
+    base_path: /workspace/ComfyUI/models/sdxl-base-1.0/
+    checkpoints: checkpoints/  # This is relative to the base_path
+
+sdxl_vae:
+    base_path: /workspace/ComfyUI/models/sdxl-base-1.0/
+    vae: vae/                  # This is also relative to the base_path
+
+sdxl_loras:
+    base_path: /workspace/ComfyUI/models/sdxl-base-1.0/
+    loras: loras/

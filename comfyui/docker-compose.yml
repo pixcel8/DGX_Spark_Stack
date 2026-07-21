@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  comfyui:
+    image: comfyui-flux2-blackwell:latest
+    container_name: comfyui
+    restart: always
+
+    ports:
+      - "38188:8188"
+
+    # GPU + NVIDIA Runtime
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+    # Equivalent to --gpus all --ipc=host --ulimit memlock=-1 --ulimit stack=67108864
+    runtime: nvidia
+    ipc: host
+    ulimits:
+      memlock: -1
+      stack: 67108864
+
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      - TORCH_DTYPE=bf16
+
+    volumes:
+      #- /srv/models/Flux2_Dev_Mix/diffusion_models:/workspace/ComfyUI/models/checkpoints
+      #- /srv/models/Flux2_Dev_Mix/text_encoders:/workspace/ComfyUI/models/clip
+      #- /srv/models/Flux2_Dev_Mix/vae:/workspace/ComfyUI/models/vae
+      #- /srv/models/Flux2_Dev_Mix/loras:/workspace/ComfyUI/models/loras
+
+      - /srv/models:/workspace/ComfyUI/models
+      - ./extra_model_paths.yaml:/workspace/ComfyUI/extra_model_paths.yaml
+      - ./output:/workspace/ComfyUI/output
+      - ./input:/workspace/ComfyUI/input
+      - ./workflows:/workspace/ComfyUI/user/default/workflows
+      - ./custom_nodes:/workspace/ComfyUI/custom_nodes
