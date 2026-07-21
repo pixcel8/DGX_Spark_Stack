@@ -1,0 +1,8 @@
+pandas
+openpyxl
+unstructured[all-docs]
+fastapi
+uvicorn
+python-multipart
+watchdog
+rapidocr-onnxruntime
